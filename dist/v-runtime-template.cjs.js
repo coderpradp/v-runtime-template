@@ -1,6 +1,6 @@
 /**
- * v-runtime-template v1.6.0
- * (c) 2018 Alex J <alexjovermorales@gmail.com>
+ * v-runtime-template v1.6.2
+ * (c) 2019 Alex J <alexjovermorales@gmail.com>
  * @license MIT
  */
 
@@ -31,19 +31,25 @@ var buildFromProps = function (obj, props) {
 
 var index = {
   props: {
-    template: String
+    template: String,
+    templateProps: {
+      type: Object,
+      default: function () {
+        return {}
+      }
+    }
   },
   render: function render(h) {
     var this$1 = this;
 
     if (this.template) {
       var ref = this.$parent;
-      var $data = ref.$data;
-      var $props = ref.$props;
-      var $options = ref.$options;
-      var components = $options.components;
-      var computed = $options.computed;
-      var methods = $options.methods;
+      var $data = ref.$data; if ( $data === void 0 ) $data = {};
+      var $props = ref.$props; if ( $props === void 0 ) $props = {};
+      var $options = ref.$options; if ( $options === void 0 ) $options = {};
+      var components = $options.components; if ( components === void 0 ) components = {};
+      var computed = $options.computed; if ( computed === void 0 ) computed = {};
+      var methods = $options.methods; if ( methods === void 0 ) methods = {};
 
       var passthrough = {$data:{}, $props:{}, $options:{}, components:{}, computed:{}, methods:{}};
 
@@ -57,9 +63,10 @@ var index = {
       var methodKeys = Object.keys(passthrough.methods || {});
       var dataKeys = Object.keys(passthrough.$data || {});
       var propKeys = Object.keys(passthrough.$props || {});
-      var allKeys = dataKeys.concat(propKeys).concat(methodKeys);
+      var templatePropKeys = Object.keys(this.templateProps || {});
+      var allKeys = dataKeys.concat(propKeys).concat(methodKeys).concat(templatePropKeys);
       var methodsFromProps = buildFromProps(this.$parent, methodKeys);
-      var props = merge([passthrough.$data, passthrough.$props, methodsFromProps]);
+      var props = merge([passthrough.$data, passthrough.$props, methodsFromProps, this.templateProps]);
 
       var dynamic = {
         template: this.template || "<div></div>",
